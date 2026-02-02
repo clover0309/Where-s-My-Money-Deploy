@@ -1,0 +1,29 @@
+# .dockerignore for backend
+.gradle
+build/classes
+build/generated
+build/resources
+build/tmp
+build/test-results
+build/reports
+bin
+.settings
+.classpath
+.project
+.idea
+*.iml
+.DS_Store
+*.log
+
+# 민감한 정보
+application-secret.yml
+*.env
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# 문서
+README.md
+*.md

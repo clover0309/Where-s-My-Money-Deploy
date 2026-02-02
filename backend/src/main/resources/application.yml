@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: dev
+    include: secret
+  main:
+    allow-bean-definition-overriding: true
+    allow-circular-references: true
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+      # 원하는 네이밍으로 컬럼명을 지정가능하게 위한 피지컬 전략 설정.
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          time_zone: Asia/Seoul
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expiration: 86400000
+  header: Authorization
+  prefix: Bearer
+
+server:
+  port: 8080

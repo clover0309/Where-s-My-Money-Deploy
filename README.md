@@ -1,0 +1,56 @@
+# 개인 자산 관리 웹사이트 내돈 어디갔어?
+
+프로젝트 목적 : 보유하고 있는 주식 & 현물 자산을 조금 더 쉽게 보고, 손익률을 계산하기 위해서 만드는 프로젝트
+
+작업 예상 기간 : 약 한달 예상.
+
+개발 환경 및 사용언어 : Windows 11, MySQL, JAVA, JPA, SpringBoot, VSCODE, Notion, React, 만일 추가가 필요할 시 Python
+
+AI툴 : Github Copilot, Gemini
+
+서버 구동 환경 : Ubuntu 22.04 LTS 개인 서버 
+
+## 🚀 CI/CD 파이프라인
+
+이 프로젝트는 GitHub Actions를 사용하여 자동 배포됩니다.
+- **배포 방식**: Docker 컨테이너화
+- **배포 트리거**: main 브랜치에 push 또는 PR merge
+- **배포 대상**: Ubuntu 서버
+- **자동화**: 빌드 → 테스트 → Docker 이미지 생성 → 배포
+
+### 빠른 시작 (Docker)
+
+```bash
+# .env 파일 생성
+cp .env.example .env
+# .env 파일을 편집하여 올바른 값 설정
+
+# Docker 환경 시작
+./docker-start.sh
+
+# Docker 환경 중지
+./docker-stop.sh
+```
+
+자세한 설정 방법:
+- Docker 배포: [DOCKER.md](./DOCKER.md)
+- CI/CD 파이프라인: [DEPLOYMENT.md](./DEPLOYMENT.md)
+
+## 기능
+
+개인정보 보호를 위한 로그인 기능
+사용자 페이지에서, 사용자가 보유한 주식 및 현물자산을 직접 추가, 제거가 가능
+언제 샀고, 현재 기준 매도시 예상 수익률 계산 기능
+
+
+재미삼아 넣는 기능 :
+이 돈으로 무엇을 할 수 있었을까요?
+ex) 이 돈이면 아반떼 N DCT 0.5대 정도는 살 수 있네요~, 이 돈이면 장난감으로 산 모닝 LPG 수동을 3대 살 수 있네요~ 등등.
+
+
+사용 API : 키움증권 API
+
+API에서 사용할 데이터 : 
+현 주식거래량, 주식거래금액, 현물자산(금, 은 등등)
+API가 허용되는 한계선에서, 특정 날짜의 주식가격 서칭 가능하게 (해당되는 기간에 주식이 상장되지 않았을 경우를 생각하자.)
+

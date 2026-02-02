@@ -1,0 +1,78 @@
+services:
+  database:
+    image: mysql:8.0
+    container_name: wheresmymoney-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Seoul
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - wheresmymoney-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wheresmymoney-backend
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      KIWOOM_APPKEY: ${KIWOOM_APP_KEY}
+      KIWOOM_SECRETKEY: ${KIWOOM_SECRET_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    ports:
+      - "8080:8080"
+    networks:
+      - wheresmymoney-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wheresmymoney-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8000:80"
+    networks:
+      - wheresmymoney-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  wheresmymoney-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
